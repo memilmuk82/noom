@@ -7,14 +7,23 @@ html(lang="kr")
         title Noom
         link(rel="stylesheet", href="https://unpkg.com/mvp.css")
     body
-        // h1 It works!
+        //- h1 It works!
         header
             h1 Noom
         main
-            #welcome
-                form
+            div#welcome 
+                form 
+                    //- 룸 이름 입력 폼
                     input(placeholder="room name", required, type="text")
                     button Enter Room
+            div#room
+                h3  
+                //- 채팅방 이름 표시
+                ul
+                form 
+                    //- 메시지 입력 폼
+                    input(placeholder="message", required, type="text")
+                    button Send
 
         script(src="/socket.io/socket.io.js")
         script(src="/public/js/app.js")

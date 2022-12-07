@@ -16,14 +16,16 @@ const httpserver = http.createServer(app);
 const wsServer = SocketIO(httpserver); // wsServer를 만들기 위해 SocketIO에 httpserver를 넘겨줌
 
 wsServer.on("connection", (socket) => {
-    socket.on("enter_room", (roomName, done) => {
+    socket.on("enter_room", (roomName, done) => { 
+        // socket.emit("enter_room", input.value, () <- app.js emit 메소드 인자로 3개 사용됨.
         // socket.on -> 이벤트 핸들링 메소드
-        // 첫번째 인자 -> 이벤트 이름, 두번째 인자 -> 이벤트 핸들러 함수
-        // 매개변수 roonName -> 프론트엔드에서 emit메소드를 통해 보낸 객체가 전달됨.
-        console.log(roomName);
-        setTimeout(() => {
-            done();
-        }, 5000);
+        // 첫번째 인자 -> 이벤트 이름, 두번째 인자 -> 이벤트 핸들러 함수(done),app.js의 showRoom함수
+        // 매개변수 roonName -> 프론트엔드에서 emit메소드를 통해 보낸 객체(input.value)가 전달됨.
+        done(); // app.js의 showRoom함수 호출
+        socket.join(roomName); // socket.io에서 채팅룸에 접속하기 위한 메소드
+        socket.to(roomName).emit("welcome"); 
+        // to메소드 -> 소켓이 join메소드로 접속한 채팅룸을 대상으로 설정
+        // emit 메소드 호출 -> 해당 채팅룸에 참가한 소켓들에 대해서만 이벤트 발생(이벤트명 "welcome")        
     });
 });    
 
