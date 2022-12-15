@@ -16,11 +16,25 @@ function addMessage(message){
     ul.appendChild(li); // ul태그의 하위 태그로 li 추가
 }
 
+function handleMessageSubmit(event){
+    event.preventDefault();
+    const input = room.querySelector("input"); // #room 아래의 input 태그를 선택
+    const value = input.value;
+    socket.emit("new_message", value, roomName, () => {
+        // new_message 이벤트 발생 -> 서버에는 입력된 값, 채팅룸 이름과 함께 콜백 함수 전달 -> addMessage 함수 호출
+        addMessage(`You: ${value}`);
+    })
+    input.value = "";
+}
+
 function showRoom(){ // showRoom 함수 호출
     welcome.hidden = true; // 룸 이름 off
     room.hidden = false; // 채팅룸 on
     const h3 = room.querySelector("h3");
     h3.innerText = `Room ${roomName}`; // 룸 이름을 입력하면 값이 대입되어 h3에 표시
+    const form = room.querySelector("form")
+    form.addEventListener("submit", handleMessageSubmit);
+    // 폼에서 적은 메시지 처리를 위해 이벤트 핸들러 함수 등록 추가
 }
 
 function handleRoomSubmit(event){ // input에 입력된 값을 읽고, 이를 소켓을 통해 서버로 전송
@@ -42,3 +56,11 @@ socket.on("welcome", () => { // welcome 이벤트 발생
     addMessage("someone joined!"); 
     // addMessage 함수 호출 -> 화면에 "someone joined!" 출력
 });
+
+socket.on("bye", () => {  // bye 이벤트 발생
+    addMessage("someone left ㅠㅠ");
+}); // addMessage 함수 호출 -> 화면에 "someone left ㅠㅠ" 출력
+
+socket.on("new_message", (msg) => {  // new_message 이벤트 발생
+    addMessage(msg);
+}); // addMessage 함수 호출 -> 메시지를 같은 채팅룸의 모든 사용자에게 출력
